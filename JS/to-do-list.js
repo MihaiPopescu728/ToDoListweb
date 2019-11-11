@@ -10,16 +10,34 @@ window.ToDoList = {
             console.log(response);
             ToDoList.displayItems(JSON.parse(response))
         });
+    },
+    createItem: function () {
+        var requestBody = {};
+        let description = $("#description-field").val();
+        let deadline = $("#deadline-field").val();
 
-    }, displayItems:
-
-        function (items) {
-            var tableContent = "";
-            items.forEach(item => tableContent += ToDoList.getItemTableRow(item));
-            $("#to-do-items tbody").html(tableContent);
+        var request
+        body = {
+            description: descriptionValue,
+            deadline: deadlineValue
         }
+        $.ajax({
+            url: ToDoList.API_URL,
+            method: "POST",
+            //MIME type
+            contentType: "application/json",
+            data: JSON.stringify(requestBody)
+        }).done(function () {
+            ToDoList.getItems();
 
-    ,
+        })
+
+    }, displayItems: function (items) {
+        var tableContent = "";
+        items.forEach(item => tableContent += ToDoList.getItemTableRow(item));
+        $("#to-do-items tbody").html(tableContent);
+    },
+
     getItemTableRow: function (item) {
         //spread(...)
         var deadline = new Date(...item.deadline).toLocaleDateString("en");
@@ -33,5 +51,15 @@ window.ToDoList = {
                 <i class="fas fa-recycle"></i></a> </td>
         </tr>`
     }
-}
+    ,
+    bindEvents: function () {
+        $("#create-item-from").submit(function (event) {
+            event.preventDefault();
+            ToDoList.createItem();
+
+        });
+    }
+};
+
 ToDoList.getItems();
+ToDoList.bindEvents();
