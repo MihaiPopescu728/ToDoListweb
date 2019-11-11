@@ -58,8 +58,49 @@ window.ToDoList = {
             ToDoList.createItem();
 
         });
-    }
-};
+    },
+    markItemDone: function (id, done) {
+        let requestBody = {
+            done: done
+        };
+        $.ajax({
+            url: ToDoList.API_URL + "?id = " + id,
+            method: "PUT",
+            contentType: "application?json",
+            data: JSON.stringify(requestBody)
+        }).done(function () {
+            ToDoList.createItem();
+        });
+
+        //delegate is necessary cause our checkbox is dinamically injected in the page (not preasent from the
+        //begining  on the page load)
+
+        $("#to-do-items").delegate(".mark-done", "change", function (event) {
+            even.preventDefault();
+            $(this).data("id");
+            let id = $(this).data("id");
+            let checked = $(this).is(":checked");
+            ToDoList.markItemDone(id, checked);
+        });
+    },
+    deleteItem: function (id, done) {
+        let requestBody = {
+            done: done
+        };
+        $.ajax({
+            url: ToDoList.API_URL + "?id = " + id,
+            method: "DELETE",
+        }).done(function () {
+            ToDoList.createItem();
+        });
+        $("#to-do-items").delegate(".delete-item", "change", function (event) {
+            even.preventDefault();
+            $(this).data("id");
+            let id = $(this).data("id");
+            ToDoList.deleteItem(id, checked);
+        });
+    },
+}
 
 ToDoList.getItems();
 ToDoList.bindEvents();
